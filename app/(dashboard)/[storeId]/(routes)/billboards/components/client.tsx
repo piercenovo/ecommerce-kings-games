@@ -4,18 +4,20 @@ import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-// import { DataTable } from "@/components/ui/data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
+import { Billboard } from "@prisma/client";
 // import { ApiList } from "@/components/ui/api-list";
 
-// import { columns, BillboardColumn } from "./columns";
+import { columns, BillboardColumn } from "./columns";
 
-// interface BillboardClientProps {
-//   data: BillboardColumn[];
-// }
+interface BillboardClientProps {
+  data: BillboardColumn[]
+}
 
-export const BillboardClient = ({
+export const BillboardClient: React.FC<BillboardClientProps> = ({
+  data
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -23,14 +25,14 @@ export const BillboardClient = ({
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={`Billboards 0`} description="Manage billboards for your store" />
+        <Heading title={`Publicidades (${data.length})`} description="Gestiona las vallas publicitarias para tu tienda." />
         <Button onClick={() => router.push(`/${params.storeId}/billboards/new`)}>
-          <Plus className="mr-2 h-4 w-4" /> Add New
+          <Plus className="mr-2 h-4 w-4" /> Agregar nueva
         </Button>
       </div>
       <Separator />
-      {/* <DataTable searchKey="label" columns={columns} data={data} /> */}
-      <Heading title="API" description="API Calls for Billboards" />
+      <DataTable searchKey="label" columns={columns} data={data} />
+      <Heading title="API" description="Llamadas API para vallas publicitarias" />
       <Separator />
       {/* <ApiList entityName="billboards" entityIdName="billboardId" /> */}
     </>
