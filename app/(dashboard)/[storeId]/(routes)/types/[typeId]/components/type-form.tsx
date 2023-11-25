@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Billboard } from "@prisma/client"
+import { Type } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -23,20 +23,19 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
-import ImageUpload from "@/components/ui/image-upload"
 
 const formSchema = z.object({
-  label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  name: z.string().min(1),
+  value: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type TypeFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
-  initialData: Billboard | null;
+interface TypeFormProps {
+  initialData: Type | null;
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const TypeForm: React.FC<TypeFormProps> = ({
   initialData
 }) => {
   const params = useParams();
@@ -45,32 +44,31 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Editar publicidad' : 'Crear publicidad';
-  const description = initialData ? 'Editar una publicidad.' : 'Agregar una nueva publicidad';
-  const toastMessage = initialData ? 'Publicidad actualizada.' : 'Publicidad creada.';
+  const title = initialData ? 'Editar tipo' : 'Crear tipo';
+  const description = initialData ? 'Editar un tipo.' : 'Agregar un nuevo tipo';
+  const toastMessage = initialData ? 'Tipo actualizado.' : 'Tipo creado.';
   const action = initialData ? 'Guardar cambios' : 'Crear';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<TypeFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      label: '',
-      imageUrl: ''
+      name: ''
     }
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: TypeFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data);
+        await axios.patch(`/api/${params.storeId}/types/${params.typeId}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/billboards`, data);
+        await axios.post(`/api/${params.storeId}/types`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
+      router.push(`/${params.storeId}/types`);
       toast.success(toastMessage);
     } catch (error: any) {
-      toast.error('Algo salió mal.');
+      toast.error('Algo pasó mal.');
     } finally {
       setLoading(false);
     }
@@ -79,12 +77,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`);
+      await axios.delete(`/api/${params.storeId}/types/${params.typeId}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success('Publicidad eliminada.');
+      router.push(`/${params.storeId}/types`);
+      toast.success('Tipo eliminado.');
     } catch (error: any) {
-      toast.error('Primero asegúrese de eliminar todas las categorías que utilizan esta publicidad.');
+      toast.error('Asegúrate de quitar todos los productos que usan este tamaño primero.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -115,33 +113,28 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       <Separator />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-          <FormField
+          <div className="md:grid md:grid-cols-3 gap-8">
+            <FormField
               control={form.control}
-              name="imageUrl"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Imagen de fondo</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <ImageUpload 
-                      value={field.value ? [field.value] : []} 
-                      disabled={loading} 
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange('')}
-                    />
+                    <Input disabled={loading} placeholder="Nombre de tipo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
               control={form.control}
-              name="label"
+              name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Etiqueta</FormLabel>
+                  <FormLabel>Valor</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Etiqueta de publicidad" {...field} />
+                    <Input disabled={loading} placeholder="Valor de tipo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

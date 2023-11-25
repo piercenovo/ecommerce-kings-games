@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertModal } from "@/components/modals/alert-modal";
 
-import { BillboardColumn } from "./columns";
+import { ColorColumn } from "./columns";
 
 interface CellActionProps {
-  data: BillboardColumn;
+  data: ColorColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -33,11 +33,11 @@ export const CellAction: React.FC<CellActionProps> = ({
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
-      toast.success('Publicidad eliminada');
+      await axios.delete(`/api/${params.storeId}/colors/${data.id}`);
+      toast.success('Color eliminado.');
       router.refresh();
     } catch (error) {
-      toast.error('Primero asegúrese de eliminar todas las categorías que utilizan este cartel.');
+      toast.error('Asegúrate de eliminar todos los productos que usan este color primero.');
     } finally {
       setOpen(false);
       setLoading(false);
@@ -60,7 +60,7 @@ export const CellAction: React.FC<CellActionProps> = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
+            <span className="sr-only">Abrir menú</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -72,7 +72,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Copy className="mr-2 h-4 w-4" /> Copiar Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/billboards/${data.id}`)}
+            onClick={() => router.push(`/${params.storeId}/colors/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Actualizar
           </DropdownMenuItem>
